@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- To'lovlar Ro'yxati (Tree) -->
+    <record id="view_van_payment_tree" model="ir.ui.view">
+        <field name="name">van.payment.tree</field>
+        <field name="model">van.payment</field>
+        <field name="arch" type="xml">
+            <!-- Global allowed creation -->
+            <list string="To'lovlar" decoration-success="payment_type == 'in'" decoration-danger="payment_type == 'out'">
+                <field name="name"/>
+                <field name="agent_id"/>
+                <field name="partner_id" optional="show"/>
+                <field name="taminotchi_id" optional="show"/>
+                <field name="payment_type" widget="badge" decoration-success="payment_type == 'in'" decoration-danger="payment_type == 'out'"/>
+                <field name="sale_order_id" optional="hide"/>
+                <field name="date"/>
+                <field name="amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="note" optional="show"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- To'lov Yaratish/Tahrirlash (Form) -->
+    <record id="view_van_payment_form" model="ir.ui.view">
+        <field name="name">van.payment.form</field>
+        <field name="model">van.payment</field>
+        <field name="arch" type="xml">
+            <form string="To'lov">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="agent_id" required="1"/>
+                            <field name="payment_type" required="1" readonly="context.get('default_payment_type') != False"/>
+                            <field name="expense_type" invisible="payment_type == 'in'" required="payment_type == 'out'" widget="radio" options="{'horizontal': true}"/>
+                            <field name="partner_id" invisible="payment_type == 'out'" options="{'no_create': True}" domain="[('x_is_van_customer', '=', True)]"/>
+                            <field name="taminotchi_id" invisible="payment_type == 'in'" options="{'no_create': True}"/>
+                            <field name="taminotchi_balance_dummy" invisible="payment_type == 'in' or not taminotchi_id" decoration-danger="taminotchi_balance_dummy > 0" decoration-success="taminotchi_balance_dummy &lt;= 0"/>
+                            <field name="sale_order_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="amount" required="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="payment_method" invisible="1"/>
+                            <field name="date" required="1"/>
+                            <field name="note" placeholder="Shu yerga nima maqsadda to'lov qilinganligini yozing..."/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_van_kirimlar_global" model="ir.actions.act_window">
+        <field name="name">Kirimlar</field>
+        <field name="res_model">van.payment</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('payment_type', '=', 'in')]</field>
+        <field name="context">{'default_payment_type': 'in'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Birinchi Kirimni (Income) yarating
+            </p>
+        </field>
+    </record>
+
+    <record id="action_van_chiqimlar_global" model="ir.actions.act_window">
+        <field name="name">Chiqimlar</field>
+        <field name="res_model">van.payment</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('payment_type', '=', 'out')]</field>
+        <field name="context">{'default_payment_type': 'out'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Birinchi Chiqimni (Expense) yarating
+            </p>
+        </field>
+    </record>
+</odoo>

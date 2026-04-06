@@ -1,0 +1,175 @@
+.van-dashboard-wrapper {
+    background-color: #f8f9fa;
+}
+
+.van-dashboard-wrapper .card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border-radius: 12px;
+}
+
+.van-dashboard-wrapper .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+.van-dashboard-wrapper table th {
+    font-weight: 600;
+    color: #495057;
+}
+
+.van-dashboard-wrapper .badge {
+    font-size: 0.85em;
+    padding: 0.4em 0.8em;
+}
+
+/* Premium Card Gradients */
+.bg-gradient-info {
+    background: linear-gradient(135deg, #0dcaf0 0%, #0bacce 100%) !important;
+    color: #fff !important;
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #198754 0%, #12633e 100%) !important;
+    color: #fff !important;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #6f42c1 0%, #59359a 100%) !important;
+    color: #fff !important;
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%) !important;
+    color: #212529 !important;
+}
+
+.text-white-50 {
+    color: rgba(255, 255, 255, 0.75) !important;
+}
+
+/* Consistent Product Image Sizing */
+.van-product-image-container {
+    width: 100%;
+    height: 110px;
+    background: #f9fafb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.pos-product-image,
+.sorov-product-image,
+.yuklash-product-image {
+    max-width: 100%;
+    max-height: 100%;
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin: 0 auto;
+    display: block;
+}
+
+/* Client Report Styles */
+.van-report-container {
+    margin-bottom: 20px;
+}
+
+.van-report-container table th {
+    background: #f1f5f9;
+    color: #475569;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+}
+
+.van-report-container table td {
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.van-report-container input[type="date"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: white;
+}
+
+.van-hisobot-btn:active {
+    background: #e2e8f0;
+    transform: scale(0.98);
+}
+
+.van-report-container tr:active {
+    background: #f8fafc !important;
+}
+/* Trip Details Table */
+.van-trip-table {
+    width: 100%;
+}
+
+.van-trip-header {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+    gap: 4px;
+    padding: 10px 5px;
+    background: #f1f5f9;
+    border-bottom: 2px solid #e2e8f0;
+    font-weight: bold;
+    font-size: 11px;
+    color: #475569;
+    text-transform: uppercase;
+}
+
+.van-trip-row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+    gap: 4px;
+    padding: 12px 5px;
+    border-bottom: 1px solid #f1f5f9;
+    align-items: center;
+    background: white;
+}
+
+.van-trip-row:nth-last-child(2) {
+    border-bottom: none;
+}
+
+.van-trip-footer {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+    gap: 4px;
+    padding: 15px 5px;
+    background: #ecfdf5;
+    border-top: 2px solid #10b981;
+    font-weight: bold;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.van-trip-col {
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.van-trip-col-right {
+    text-align: right;
+}
+
+.van-trip-prod-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.van-trip-thumb {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    background: #f8fafc;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+}

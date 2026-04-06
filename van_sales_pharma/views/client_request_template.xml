@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="client_request_template" name="Telegram Client Request">
+        &lt;!DOCTYPE html&gt;
+        <html>
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"/>
+                <title>Zakaz Berish</title>
+                <!-- Include Telegram Web App Script -->
+                <script src="https://telegram.org/js/telegram-web-app.js"></script>
+                <!-- Tailwind CSS for fast styling (using a CDN for standalone template) -->
+                <script src="https://cdn.tailwindcss.com"></script>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+                
+                <style>
+                    body {
+                        background-color: #f8fafc; /* Very light gray */
+                        color: #1e293b; /* Dark text */
+                        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                        padding-bottom: 80px;
+                    }
+                    .hint-color { color: #64748b; }
+                    .link-color { color: #2563eb; }
+                    
+                    /* Custom Scrollbar for products */
+                    ::-webkit-scrollbar { width: 6px; height: 6px; }
+                    ::-webkit-scrollbar-track { background: transparent; }
+                    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+                </style>
+            </head>
+            
+            <body class="antialiased">
+                <div id="app" class="max-w-md mx-auto relative min-h-screen flex flex-col" t-att-data-partner-id="partner_id" t-att-data-odoo-url="odoo_url" t-att-data-products="products_json">
+                    
+                    <!-- Header -->
+                    <div class="px-5 pt-6 pb-4 flex items-center justify-between sticky top-0 z-10 shadow-md" style="background-color: #1e293b; color: #ffffff;">
+                        <h1 class="text-xl font-bold">Yangi So'rov 🛍️</h1>
+                        <div class="flex items-center space-x-2 bg-white/20 text-white px-3 py-1 rounded-full text-sm font-semibold border border-white/10">
+                            <i class="fa fa-user"></i>
+                            <span id="clientName"><t t-esc="partner_name"/></span>
+                        </div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="flex-1 p-4 mb-20">
+                        
+                        <!-- Removed Xarid qutisi as requested -->
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-bold mb-2 hint-color">Izoh (Ixtiyoriy)</label>
+                            <textarea id="requestNotes" rows="2" placeholder="Qo'shimcha talablaringiz..." class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-sm bg-white text-gray-800 shadow-sm"></textarea>
+                        </div>
+
+                        <!-- Error Banner (Hidden by Default) -->
+                        <div id="errorBanner" class="hidden mb-6 p-4 rounded-xl text-sm" style="background-color: #fee2e2; color: #991b1b; border: 1px solid #f87171;">
+                            <div class="flex items-start">
+                                <i class="fa fa-exclamation-triangle mt-1 mr-2 text-red-600"></i>
+                                <div class="flex-1">
+                                    <h3 class="font-bold mb-1">Xatolik!</h3>
+                                    <p id="errorBannerMessage">Nimadir xato ketdi. Iltimos qayta urinib ko'ring.</p>
+                                    <button onclick="document.getElementById('errorBanner').classList.add('hidden')" class="mt-2 text-red-700 underline font-semibold focus:outline-none">Yopish</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Selector Section -->
+                        <div class="border-t border-gray-100 pt-6">
+                            <h2 class="font-bold text-lg mb-4 flex items-center"><i class="fa fa-list mr-2 text-blue-500"></i> Barcha Mahsulotlar</h2>
+                            
+                            <div class="mb-4">
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fa fa-search text-gray-400"></i>
+                                    </div>
+                                    <input type="text" id="searchInput" placeholder="Nomi bo'yicha qidirish..." class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-sm bg-white text-gray-800 shadow-sm"/>
+                                </div>
+                            </div>
+
+                            <div id="productGrid" class="grid grid-cols-2 gap-3 pb-8">
+                                <t t-foreach="products" t-as="p">
+                                    <div class="product-card bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm transition flex flex-col" t-att-id="'card-' + str(p['id'])">
+                                        <div class="h-28 bg-gray-50 flex items-center justify-center p-2 relative">
+                                            <t t-if="p['image_url']">
+                                                <img t-att-src="p['image_url']" onerror="this.src='/van_sales_pharma/static/description/icon.png';" class="max-h-full max-w-full object-contain rounded-md"/>
+                                            </t>
+                                            <t t-else="">
+                                                <i class="fa fa-box text-3xl text-gray-300"></i>
+                                            </t>
+                                        </div>
+                                        <div class="p-3 flex-1 flex flex-col">
+                                            <div class="font-semibold text-sm mb-1 leading-tight line-clamp-2 flex-1 product-name"><t t-esc="p['name']"/></div>
+                                            <div class="text-xs text-green-600 font-bold mt-2"><t t-esc="p['price_str']"/> UZS</div>
+                                        </div>
+                                        <!-- Real-time Quantity Controllers -->
+                                        <div class="p-2 border-t border-gray-100 bg-gray-50">
+                                            <div class="flex items-center justify-between border border-gray-300 rounded-lg overflow-hidden h-10 bg-white">
+                                                <button t-att-data-id="p['id']" class="btn-decrease w-12 h-full flex items-center justify-center text-red-600 font-bold bg-gray-100 hover:bg-gray-200 transition border-r border-gray-300 active:bg-gray-300">
+                                                    <i t-att-id="'minus-icon-' + str(p['id'])" class="fa fa-minus text-sm font-black pointer-events-none"></i>
+                                                </button>
+                                                <input type="number" t-att-id="'qty-' + str(p['id'])" t-att-data-id="p['id']" class="qty-input flex-1 text-center font-bold text-base text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full h-full m-0 p-0" value="0" />
+                                                <button t-att-data-id="p['id']" class="btn-increase w-12 h-full flex items-center justify-center text-white font-bold bg-blue-600 hover:bg-blue-700 transition border-l border-blue-700 active:bg-blue-800">
+                                                    <i class="fa fa-plus text-sm font-black pointer-events-none"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fallback Button for standard browsers (HTTP environments) -->
+                <div id="fallbackSubmitContainer" class="fixed bottom-0 left-0 right-0 p-4 border-t border-gray-200 z-50 bg-white" style="display: none; padding-bottom: calc(1rem + env(safe-area-inset-bottom));">
+                    <button id="fallbackSubmitBtn" class="w-full text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center shadow-md transition-transform active:scale-95 bg-blue-600 hover:bg-blue-700">
+                        <span id="fallbackBtnText">SO'ROVNI YUBORISH (0 so'm)</span>
+                    </button>
+                </div>
+
+                <!-- Web App Main Button Integration Scripts -->
+                <script type="text/javascript">
+                    <![CDATA[
+                    const tg = window.Telegram.WebApp;
+                    tg.expand(); // Expand to full height
+
+                    // Injecting backend data
+                    const appDiv = document.getElementById('app');
+                    const partnerId = parseInt(appDiv.getAttribute('data-partner-id'));
+                    let odooUrl = appDiv.getAttribute('data-odoo-url');
+                    if (odooUrl.startsWith('http://') && !odooUrl.includes('localhost') && !odooUrl.includes('127.0.0.1')) {
+                        odooUrl = odooUrl.replace("http://", "https://");
+                    }
+                    
+                    const productsStr = appDiv.getAttribute('data-products');
+                    const PRODUCTS = productsStr ? JSON.parse(productsStr) : {};
+                    let cart = {}; // { productId: { name, price, qty, img } }
+                    
+                    // MainButton setup
+                    tg.MainButton.text = "SO'ROVNI YUBORISH (0 so'm)";
+                    tg.MainButton.color = tg.themeParams.button_color || "#10b981"; // Emerald green
+                    
+                    // UI Elements
+                    const searchInput = document.getElementById('searchInput');
+                    
+                    const isNativeWebApp = tg.platform && tg.platform !== "unknown";
+                    
+                    function updateMainButton() {
+                        let totalAmount = 0;
+                        let totalItems = 0;
+                        
+                        for (let id in cart) {
+                            totalAmount += (cart[id].price * cart[id].qty);
+                            totalItems++;
+                        }
+                        
+                        const btnText = `SO'ROVNI YUBORISH (${totalAmount.toLocaleString()} so'm)`;
+                        
+                        if (totalAmount > 0) {
+                            if (isNativeWebApp) {
+                                tg.MainButton.text = btnText;
+                                tg.MainButton.show();
+                            } else {
+                                document.getElementById('fallbackSubmitContainer').style.display = 'block';
+                                document.getElementById('fallbackBtnText').textContent = btnText;
+                            }
+                        } else {
+                            if (isNativeWebApp) {
+                                tg.MainButton.hide();
+                            } else {
+                                document.getElementById('fallbackSubmitContainer').style.display = 'none';
+                            }
+                        }
+                        
+                        // Removed global cart view updates
+                        syncCards();
+                    }
+                    
+                    function syncCards() {
+                        document.querySelectorAll('.product-card').forEach(card => {
+                            const id = card.id.replace('card-', '');
+                            const qtyEl = document.getElementById('qty-' + id);
+                            if (!qtyEl) return;
+                            
+                            const inCartQty = cart[id] ? cart[id].qty : 0;
+                            qtyEl.value = inCartQty;
+                            
+                            const minusIcon = document.getElementById('minus-icon-' + id);
+                            if (minusIcon) {
+                                if (inCartQty === 1) {
+                                    minusIcon.className = "fa fa-trash text-red-500 text-xs";
+                                } else {
+                                    minusIcon.className = "fa fa-minus text-xs";
+                                }
+                            }
+
+                            if (inCartQty > 0) {
+                                // Highlight
+                                card.classList.replace('border-gray-200', 'border-blue-600');
+                                card.classList.add('border-2');
+                                card.classList.add('bg-blue-50');
+                                card.classList.remove('bg-white');
+                            } else {
+                                // Default
+                                card.classList.replace('border-blue-600', 'border-gray-200');
+                                card.classList.remove('border-2');
+                                card.classList.add('bg-white');
+                                card.classList.remove('bg-blue-50');
+                            }
+                        });
+                    }
+
+                    // Event Delegation for Buttons
+                    document.addEventListener('click', function(e) {
+                        // Handle increase/decrease buttons
+                        const btn = e.target.closest('button');
+                        if (btn && (btn.classList.contains('btn-increase') || btn.classList.contains('btn-decrease'))) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const id = btn.getAttribute('data-id');
+                            const delta = btn.classList.contains('btn-increase') ? 1 : -1;
+                            changeQtyFromCard(id, delta);
+                        }
+                    });
+                    
+                    document.addEventListener('input', function(e) {
+                        if (e.target.classList.contains('qty-input')) {
+                            const id = e.target.getAttribute('data-id');
+                            setQtyFromCard(id, e.target.value);
+                        }
+                    });
+
+                    function setQtyFromCard(id, newValue) {
+                        const product = PRODUCTS[id];
+                        if (!product) return;
+                        
+                        const name = product.name;
+                        const price = product.price;
+                        const img = product.image_url;
+                        
+                        let parsed = parseInt(newValue);
+                        let qtyEl = document.getElementById('qty-' + id);
+                        
+                        if (isNaN(parsed) || parsed <= 0) {
+                            if (cart[id]) delete cart[id];
+                            if (qtyEl) qtyEl.value = 0; // Fix deleting input text leaving it blank
+                        } else {
+                            if (!cart[id]) {
+                                cart[id] = { name, price: parseFloat(price), qty: parsed, img };
+                            } else {
+                                cart[id].qty = parsed;
+                            }
+                            if (qtyEl) qtyEl.value = parsed;
+                        }
+                        updateMainButton();
+                        if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+                    }
+
+                    function changeQtyFromCard(id, delta) {
+                        const product = PRODUCTS[id];
+                        if (!product) return;
+                        
+                        const name = product.name;
+                        const price = product.price;
+                        const img = product.image_url;
+                        
+                        if (!cart[id] && delta > 0) {
+                            addToCart(id, name, price, img);
+                        } else if (cart[id]) {
+                            changeQty(id, delta);
+                        }
+                    }
+                    
+                    function addToCart(id, name, price, img) {
+                        if (cart[id]) {
+                            cart[id].qty++;
+                        } else {
+                            cart[id] = { name, price: parseFloat(price), qty: 1, img };
+                        }
+                        updateMainButton();
+                        // Provide haptic feedback
+                        if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                    }
+                    
+                    function changeQty(id, delta) {
+                        if (cart[id]) {
+                            cart[id].qty += delta;
+                            if (cart[id].qty <= 0) {
+                                delete cart[id];
+                            }
+                            updateMainButton();
+                            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+                        }
+                    }
+
+                    // renderCart() removed as requested
+
+                    // Search Feature
+                    searchInput.addEventListener('input', function(e) {
+                        const term = e.target.value.toLowerCase();
+                        document.querySelectorAll('.product-card').forEach(card => {
+                            const name = card.querySelector('.product-name').textContent.toLowerCase();
+                            if (name.includes(term)) {
+                                card.style.display = 'flex';
+                            } else {
+                                card.style.display = 'none';
+                            }
+                        });
+                    });
+                    
+                    async function submitData() {
+                        const lines = [];
+                        for (let id in cart) {
+                            lines.push({
+                                product_id: parseInt(id),
+                                qty: cart[id].qty
+                            });
+                        }
+                        
+                        const notes = document.getElementById('requestNotes').value;
+                        
+                        const payload = {
+                            jsonrpc: "2.0",
+                            method: "call",
+                            params: {
+                                partner_id: partnerId,
+                                lines: lines,
+                                notes: notes
+                            }
+                        };
+                        
+                        if (isNativeWebApp) tg.MainButton.showProgress();
+                        document.getElementById('fallbackSubmitBtn').style.opacity = '0.5';
+                        document.getElementById('fallbackSubmitBtn').disabled = true;
+                        
+                        try {
+                            const controller = new AbortController();
+                            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+                            
+                            const response = await fetch(`${odooUrl}/van/client/submit_request`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify(payload),
+                                signal: controller.signal
+                            });
+                            clearTimeout(timeoutId);
+                            
+                            const data = await response.json();
+                            if (data.result && data.result.success) {
+                                if (tg.HapticFeedback && isNativeWebApp) tg.HapticFeedback.notificationOccurred('success');
+                                
+                                if (isNativeWebApp) {
+                                    tg.showAlert("Sizning so'rovingiz muvaffaqiyatli jo'natildi! 🎉", function() {
+                                        tg.close();
+                                    });
+                                } else {
+                                    document.getElementById('app').innerHTML = `
+                                        <div class="flex flex-col items-center justify-center min-h-screen p-6 text-center">
+                                            <i class="fa fa-check-circle text-6xl text-green-500 mb-4"></i>
+                                            <h2 class="text-2xl font-bold mb-2">Muvaffaqiyatli!</h2>
+                                            <p class="text-gray-500">So'rovingiz qabul qilindi. Ushbu oynani yopishingiz mumkin.</p>
+                                        </div>
+                                    `;
+                                    document.getElementById('fallbackSubmitContainer').style.display = 'none';
+                                }
+                            } else {
+                                const err = data.result ? data.result.error : 'Noma\'lum xato.';
+                                if (tg.HapticFeedback && isNativeWebApp) tg.HapticFeedback.notificationOccurred('error');
+                                
+                                document.getElementById('errorBannerMessage').innerText = "Xatolik yuz berdi: " + err;
+                                document.getElementById('errorBanner').classList.remove('hidden');
+                                window.scrollTo(0, 0);
+                            }
+                        } catch (error) {
+                            if (tg.HapticFeedback && isNativeWebApp) tg.HapticFeedback.notificationOccurred('error');
+                            
+                            let errorMsg = "Tarmoqda xatolik: " + error.message;
+                            if (error.name === 'AbortError') {
+                                errorMsg = "Kechirasiz, server javob bermayapti (Timeout). Iltimos internetingizni tekshirib qayta urinib ko'ring.";
+                            }
+                            
+                            document.getElementById('errorBannerMessage').innerText = errorMsg;
+                            document.getElementById('errorBanner').classList.remove('hidden');
+                            window.scrollTo(0, 0);
+                        } finally {
+                            if (isNativeWebApp) tg.MainButton.hideProgress();
+                            document.getElementById('fallbackSubmitBtn').style.opacity = '1';
+                            document.getElementById('fallbackSubmitBtn').disabled = false;
+                        }
+                    }
+                    
+                    // Bind main button clicks
+                    tg.MainButton.onClick(submitData);
+                    document.getElementById('fallbackSubmitBtn').addEventListener('click', submitData);
+                    
+                    // Initial state
+                    updateMainButton();
+                    ]]>
+                </script>
+            </body>
+        </html>
+    </template>
+</odoo>

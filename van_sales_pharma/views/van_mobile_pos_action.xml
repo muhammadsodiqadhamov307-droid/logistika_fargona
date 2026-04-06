@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_van_mobile_pos_entry" model="ir.actions.act_url">
+        <field name="name">Mobil POS</field>
+        <field name="url">/van/mobile-pos</field>
+        <field name="target">self</field>
+    </record>
+
+    <record id="action_van_mobile_pos_app" model="ir.actions.client">
+        <field name="name">Van Mobile POS App</field>
+        <field name="tag">van_sales_pharma.MobilePosClientAction</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <menuitem id="menu_van_mobile_pos" 
+              name="Mobil POS" 
+              parent="menu_van_sales_root" 
+              action="action_van_mobile_pos_entry" 
+              sequence="5"
+              groups="van_sales_pharma.group_van_agent,van_sales_pharma.group_van_admin"/>
+</odoo>

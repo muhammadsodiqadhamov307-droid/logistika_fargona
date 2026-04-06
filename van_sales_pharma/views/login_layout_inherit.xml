@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="van_login_layout_inherit" inherit_id="web.login_layout" name="Van Sales Login Branding">
+        <!-- Re-brand the login page background and logo -->
+        <xpath expr="//div[hasclass('container')]" position="before">
+            <style>
+                body.o_web_client {
+                    background-color: #f3f4f6 !important;
+                    background-image: none !important;
+                }
+                .card-body.p-4 {
+                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                    border-radius: 1rem;
+                    border: none;
+                }
+                .login_logo_container {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+                .login_title {
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                    color: #1e3a8a; /* Blue-900 */
+                    margin-bottom: 5px;
+                }
+                .login_subtitle {
+                    color: #6b7280;
+                    font-size: 0.875rem;
+                    margin-bottom: 20px;
+                }
+                /* Hide standard Odoo footers or "Manage Databases" if any */
+                .text-center.mt-3.pb-3 { display: none !important; }
+                .text-center.pb-3 { display: none !important; }
+                .oe_login_buttons .btn-primary {
+                    background-color: #1e3a8a !important;
+                    border-color: #1e3a8a !important;
+                    border-radius: 0.5rem;
+                    padding: 12px;
+                    font-weight: 600;
+                }
+                .oe_login_buttons .btn-primary:hover {
+                    background-color: #1e40af !important;
+                }
+            </style>
+            
+            <div class="login_logo_container mt-4">
+                <i class="fa fa-truck text-5xl text-blue-800 mb-2"></i>
+                <div class="login_title">Van Sales Pharma</div>
+                <div class="login_subtitle">Tizimga kirish</div>
+            </div>
+        </xpath>
+        
+        <!-- Hide the default logo container -->
+        <xpath expr="//div[hasclass('pb-3')][hasclass('border-bottom')]" position="replace">
+            <div style="display:none;"></div>
+        </xpath>
+    </template>
+</odoo>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <!-- Dashboard (Administrator) -->
+    <!-- Vaqtincha action yo'qligi sababli bo'sh -->
+
+    <!-- Sayohatlar (Trips) -->
+    <menuitem id="menu_van_trips_main" name="Mahsulot yuklash" parent="menu_van_sales_root" action="action_van_trip_all" sequence="10"/>
+
+    <!-- Kassir oynasi -->
+    <menuitem id="menu_van_sales_main" name="Kassir oynasi" parent="menu_van_sales_root" action="point_of_sale.action_pos_pos_form" sequence="20"/>
+
+    <!-- Moliya: Kirimlar va Chiqimlar -->
+    <menuitem id="menu_van_kirimlar_main" name="Kirimlar" parent="menu_van_sales_root" action="action_van_kirimlar_global" sequence="25"/>
+    <menuitem id="menu_van_chiqimlar_main" name="Chiqimlar" parent="menu_van_sales_root" action="action_van_chiqimlar_global" sequence="26"/>
+
+    <!-- Mahsulotlar (Products) -->
+    <menuitem id="menu_van_products" name="Mahsulotlar" parent="menu_van_sales_root" action="action_van_product" sequence="30"/>
+
+    <!-- Mijozlar (Customers) Folder -->
+    <menuitem id="menu_van_customers_root_folder" name="Mijozlar" parent="menu_van_sales_root" sequence="40"/>
+    <menuitem id="menu_van_customers_list" name="Mijozlar Ro'yxati" parent="menu_van_customers_root_folder" action="action_van_customers_v2" sequence="10"/>
+
+    <!-- Taminotchilar (Suppliers) -->
+    <menuitem id="menu_van_taminotchilar" name="Taminotchilar" parent="menu_van_sales_root" action="action_van_taminotchi" sequence="45" groups="base.group_system,base.group_erp_manager,point_of_sale.group_pos_manager"/>
+
+    <!-- Agentlar -->
+    <menuitem id="menu_van_agents_root" name="Agentlar" parent="menu_van_sales_root" sequence="50"/>
+    <menuitem id="menu_van_agents_list" name="Agentlar Ro'yxati" parent="menu_van_agents_root" action="action_van_agents_list" sequence="10"/>
+    <menuitem id="menu_van_agent_summary" name="Agentlar Hisoboti" parent="menu_van_agents_root" action="action_van_agent_summary_server" sequence="20"/>
+
+    <!-- Oyliklar (Salary / Commission) -->
+    <menuitem id="menu_van_salary_main" name="Oyliklar" parent="menu_van_sales_root" action="action_van_salary_list" sequence="55" groups="base.group_system,base.group_erp_manager,point_of_sale.group_pos_manager"/>
+</odoo>

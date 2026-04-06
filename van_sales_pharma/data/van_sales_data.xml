@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Sequence for Van Trip -->
+        <record id="seq_van_trip" model="ir.sequence">
+            <field name="name">Van Trip Sequence</field>
+            <field name="code">van.trip</field>
+            <field name="prefix">TRIP/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Sequence for Van Sale Order -->
+        <record id="seq_van_sale_order" model="ir.sequence">
+            <field name="name">Van Sale Order Sequence</field>
+            <field name="code">van.sale.order</field>
+            <field name="prefix">VSO/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Sequence for Van POS Order -->
+        <record id="seq_van_pos_order" model="ir.sequence">
+            <field name="name">Van POS Order Sequence</field>
+            <field name="code">van.pos.order</field>
+            <field name="prefix">VPOS/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Sequence for Van Nasiya -->
+        <record id="seq_van_nasiya" model="ir.sequence">
+            <field name="name">Van Nasiya Sequence</field>
+            <field name="code">van.nasiya</field>
+            <field name="prefix">NAS/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Sequence for Van Payment -->
+        <record id="seq_van_payment" model="ir.sequence">
+            <field name="name">Van Payment Sequence</field>
+            <field name="code">van.payment</field>
+            <field name="prefix">VPAY/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

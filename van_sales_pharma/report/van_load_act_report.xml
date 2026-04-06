@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_van_load_act" model="ir.actions.report">
+        <field name="name">Yuklash Akti</field>
+        <field name="model">van.trip</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">van_sales_pharma.report_van_load_act</field>
+        <field name="report_file">van_sales_pharma.report_van_load_act</field>
+        <field name="print_report_name">'Yuklash_Akti_%s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_van_trip"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_van_load_act">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center mt-4">Mashinaga Yuklash Akti - <span t-field="doc.name"/></h2>
+                        
+                        <div class="row mt-4 mb-4" id="informations">
+                            <div class="col-auto mw-100 mb-2">
+                                <strong>Sana:</strong>
+                                <p class="m-0" t-field="doc.date"/>
+                            </div>
+                            <div class="col-auto mw-100 mb-2">
+                                <strong>Savdo Agenti:</strong>
+                                <p class="m-0" t-field="doc.agent_id.name"/>
+                            </div>
+                            <div class="col-auto mw-100 mb-2">
+                                <strong>Agent:</strong>
+                                <p class="m-0" t-field="doc.agent_id"/>
+                            </div>
+                        </div>
+
+                        <table class="table table-sm o_main_table table-bordered mt-4">
+                            <!-- In case we want to repeat the header, we remove the `display: table-row-group` -->
+                            <thead style="display: table-row-group">
+                                <tr>
+                                    <th name="th_description" class="text-start">Mahsulot</th>
+                                    <th name="th_quantity" class="text-end">Miqdor</th>
+
+                                    <th name="th_price" class="text-end">Sotuv Narxi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="sale_tbody">
+                                <t t-foreach="doc.trip_line_ids" t-as="line">
+                                    <tr t-att-class="'bg-200 fw-bold' if line.loaded_qty &lt;= 0 else ''">
+                                        <td><span t-field="line.product_id.name"/></td>
+                                        <td class="text-end"><span t-field="line.loaded_qty"/></td>
+
+                                        <td class="text-end">
+                                            <span t-field="line.price_unit" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        
+                        <div class="clearfix mt-4">
+                            <p>Ushbu akt asosida mahsulotlar asosiy ombordan tranzit (mashina) omboriga o'tkazildi va javobgarlik Savdo Agentiga yuklatildi.</p>
+                        </div>
+                        
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <strong>Ombor Mudiri:</strong> <br/><br/><br/>
+                                _______________________
+                            </div>
+                            <div class="col-6 text-center">
+                                <strong>Qabul qildi (Agent):</strong> <br/><br/><br/>
+                                _______________________
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

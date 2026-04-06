@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.van.sales</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="90"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Van Sales" string="Van Sales" name="van_sales_pharma" groups="base.group_system">
+                    <h2>Telegram Bot Setup</h2>
+                    <div class="row mt16 o_settings_container" name="telegram_bot_setting_container">
+                        <div class="col-12 col-lg-6 o_setting_box" id="telegram_bot_token_setting">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Bot Token</span>
+                                <div class="text-muted">
+                                    Token provided by @BotFather. Used to push automatic notifications.
+                                </div>
+                                <div class="content-group">
+                                    <div class="row mt16">
+                                        <label for="van_telegram_bot_token" class="col-lg-3 o_light_label" string="Token"/>
+                                        <field name="van_telegram_bot_token" class="col-lg-9"/>
+                                    </div>
+                                    <div class="row mt16">
+                                        <label for="van_telegram_odoo_url" class="col-lg-3 o_light_label" string="Odoo URL"/>
+                                        <field name="van_telegram_odoo_url" class="col-lg-9"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="van_sales_config_settings_action" model="ir.actions.act_window">
+        <field name="name">Sozlamalar</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="context">{'module' : 'van_sales_pharma', 'bin_size': False}</field>
+    </record>
+
+    <menuitem id="menu_van_sales_settings"
+              name="Sozlamalar"
+              parent="menu_van_sales_root"
+              sequence="100"
+              action="van_sales_config_settings_action"
+              groups="base.group_system"/>
+</odoo>

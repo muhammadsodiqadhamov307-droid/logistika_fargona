@@ -1,0 +1,28 @@
+nohup: ignoring input
+Traceback (most recent call last):
+  File "/home/odoo19/odoo19/custom_addons/van_sales_pharma/telegram_bot.py", line 306, in <module>
+    main()
+  File "/home/odoo19/odoo19/custom_addons/van_sales_pharma/telegram_bot.py", line 270, in main
+    token = get_bot_token()
+            ^^^^^^^^^^^^^^^
+  File "/home/odoo19/odoo19/custom_addons/van_sales_pharma/telegram_bot.py", line 58, in get_bot_token
+    token = models.execute_kw(ODOO_DB, uid, ODOO_PASSWORD, 'ir.config_parameter', 'get_param', ['van.telegram.bot.token'])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/xmlrpc/client.py", line 1122, in __call__
+    return self.__send(self.__name, args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/xmlrpc/client.py", line 1461, in __request
+    response = self.__transport.request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/xmlrpc/client.py", line 1166, in request
+    return self.single_request(host, handler, request_body, verbose)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/xmlrpc/client.py", line 1182, in single_request
+    return self.parse_response(resp)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/xmlrpc/client.py", line 1351, in parse_response
+    return u.close()
+           ^^^^^^^^^
+  File "/usr/lib/python3.12/xmlrpc/client.py", line 668, in close
+    raise Fault(**self._stack[0])
+xmlrpc.client.Fault: <Fault 1: 'Traceback (most recent call last):\n  File "/home/odoo19/odoo19/src/addons/rpc/controllers/xmlrpc.py", line 164, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File "/home/odoo19/odoo19/src/addons/rpc/controllers/xmlrpc.py", line 136, in _xmlrpc\n    result = dispatch_rpc(service, method, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/home/odoo19/odoo19/src/odoo/http/router.py", line 118, in dispatch_rpc\n    return dispatch(method, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/home/odoo19/odoo19/src/odoo/service/model.py", line 92, in dispatch\n    res = execute_cr(cr, uid, model, method_, args, kw)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/home/odoo19/odoo19/src/odoo/service/model.py", line 108, in execute_cr\n    result = retrying(partial(call_kw, recs, method, args, kw), env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/home/odoo19/odoo19/src/odoo/http/retrying.py", line 52, in retrying\n    result = func()\n             ^^^^^^\n  File "/home/odoo19/odoo19/src/odoo/service/model.py", line 39, in call_kw\n    method = get_public_method(model, name)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/home/odoo19/odoo19/src/odoo/orm/models.py", line 217, in get_public_method\n    raise AttributeError(f"The method \'{model._name}.{name}\' does not exist")  # noqa: TRY004\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: The method \'ir.config_parameter.get_param\' does not exist\n'>

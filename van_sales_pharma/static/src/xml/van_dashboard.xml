@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="van_sales_pharma.DashboardView" owl="1">
+        <div class="o_action o_view_controller">
+            <div class="o_content bg-view h-100 overflow-auto p-4 van-dashboard-wrapper">
+                <div class="container-fluid">
+                    <div class="row mb-4">
+                        <div class="col-12 d-flex flex-wrap justify-content-between align-items-center gap-3">
+                            <h1 class="display-6 fw-bold text-primary mb-0">Moliya paneli</h1>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="input-group input-group-sm bg-white rounded shadow-sm">
+                                    <span class="input-group-text bg-light border-0"><i class="fa fa-calendar text-muted"></i></span>
+                                    <input type="date" class="form-control border-0" t-model="state.date_from"/>
+                                    <span class="input-group-text bg-light border-0 text-muted">dan</span>
+                                    <input type="date" class="form-control border-0" t-model="state.date_to"/>
+                                    <span class="input-group-text bg-light border-0 text-muted">gacha</span>
+                                </div>
+                                <button class="btn btn-primary btn-sm shadow-sm" t-on-click="applyFilter">
+                                    <i class="fa fa-search me-1"></i> Filtrlash
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm shadow-sm" t-on-click="clearFilter">
+                                    <i class="fa fa-times me-1"></i> Tozalash
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm shadow-sm ms-2" t-on-click="fetchDashboardData">
+                                    <i class="fa fa-refresh me-1"></i> Yangilash
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kpi Cards -->
+                    <div class="row g-3 mb-4">
+                        <!-- 1. Naqt Pul -->
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <div class="card shadow-sm border-0 h-100" t-on-click="() =&gt; this.openSalesByMethod('cash')" style="cursor: pointer; background: linear-gradient(135deg, #198754 0%, #12633e 100%);">
+                                <div class="card-body text-center p-3">
+                                    <h6 class="card-title fw-bold mb-2" style="color: white !important;">Naqt Pul</h6>
+                                    <h3 class="fw-bold m-0" style="color: white !important;">
+                                        <t t-esc="formatPrice(state.total_cash)"/>
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Nasiya (Qarz) -->
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <div class="card shadow-sm border-0 h-100" t-on-click="() =&gt; this.openSalesByMethod('nasiya')" style="cursor: pointer; background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);">
+                                <div class="card-body text-center p-3">
+                                    <h6 class="card-title fw-bold mb-2" style="color: #212529 !important;">Nasiya (Qarz)</h6>
+                                    <h3 class="fw-bold m-0" style="color: #212529 !important;">
+                                        <t t-esc="formatPrice(state.total_nasiya)"/>
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Jami -->
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <div class="card shadow-sm border-0 h-100" style="background: linear-gradient(135deg, #0dcaf0 0%, #087990 100%);">
+                                <div class="card-body text-center p-3">
+                                    <h6 class="card-title fw-bold mb-2" style="color: white !important;">💰 Jami</h6>
+                                    <h3 class="fw-bold m-0" style="color: white !important;">
+                                        <t t-esc="formatPrice(state.jami)"/>
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Jami Qarzim (Taminotchi) -->
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <div class="card shadow-sm border-0 h-100" t-on-click="openTaminotchilar" style="cursor: pointer; background: linear-gradient(135deg, #6f42c1 0%, #4b2c85 100%);">
+                                <div class="card-body text-center p-3">
+                                    <h6 class="card-title fw-bold mb-2" style="color: white !important;">🏭 Jami Qarzim (Taminotchi)</h6>
+                                    <h3 class="fw-bold m-0" style="color: white !important;">
+                                        <t t-esc="formatPrice(state.total_taminotchi_balance)"/>
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. Sof Foyda -->
+                        <div class="col-12 col-md-4 col-xl-4">
+                            <div class="card shadow-sm border-0 h-100" style="background: linear-gradient(135deg, #59359a 0%, #301663 100%);">
+                                <div class="card-body text-center p-3">
+                                    <h6 class="card-title fw-bold mb-2" style="color: white !important;">💵 Sof Foyda</h6>
+                                    <h3 class="fw-bold m-0" style="color: white !important;">
+                                        <t t-esc="formatPrice(state.sof_foyda)"/>
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 6. Chiqim -->
+                        <div class="col-12 col-md-4 col-xl-4">
+                            <div class="card shadow-sm border-0 h-100" t-on-click="() =&gt; this.openSalesByMethod('chiqim')" style="cursor: pointer; background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%);">
+                                <div class="card-body text-center p-3">
+                                    <h6 class="card-title fw-bold mb-2" style="color: white !important;">Chiqim</h6>
+                                    <h3 class="fw-bold m-0" style="color: white !important;">
+                                        <t t-esc="formatPrice(state.total_chiqim)"/>
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 7. Foyda -->
+                        <div class="col-12 col-md-4 col-xl-4">
+                            <div class="card shadow-sm border-0 h-100" t-on-click="openMarginDetails" style="cursor: pointer; background: linear-gradient(135deg, #20c997 0%, #158b68 100%);">
+                                <div class="card-body text-center p-3">
+                                    <h6 class="card-title fw-bold mb-2" style="color: white !important;">Foyda</h6>
+                                    <h3 class="fw-bold m-0" style="color: white !important;">
+                                        <t t-esc="formatPrice(state.margin_today)"/>
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Sales Chart -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card shadow-sm border-0 mb-4">
+                                <div class="card-header bg-white border-bottom">
+                                    <h5 class="mb-0 text-secondary fw-bold" style="color: #0bacce !important;">Oylik Sotuvlar</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div style="height: 300px; width: 100%;">
+                                        <canvas t-ref="monthlySalesChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Lists: Customers and Agents -->
+                    <div class="row">
+                        <!-- Top Customers -->
+                        <div class="col-md-4 mb-4">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-header bg-white border-bottom">
+                                    <h5 class="mb-0 text-secondary fw-bold" style="color: #12633e !important;">Top Mijozlar</h5>
+                                </div>
+                                <div class="card-body p-0 table-responsive">
+                                    <table class="table table-hover table-borderless mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="ps-4">Mijoz</th>
+                                                <th class="text-end pe-4">Tushum</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="state.top_customers" t-as="cust" t-key="cust.name">
+                                                <tr class="align-middle border-bottom">
+                                                    <td class="ps-4 fw-bold text-dark"><t t-esc="cust.name"/></td>
+                                                    <td class="text-end pe-4 fw-bold text-success"><t t-esc="formatPrice(cust.total)"/></td>
+                                                </tr>
+                                            </t>
+                                            <tr t-if="state.top_customers.length === 0">
+                                                <td colspan="2" class="text-center text-muted py-4">Hali sotuvlar yo'q</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top Agents -->
+                        <div class="col-md-4 mb-4">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-header bg-white border-bottom">
+                                    <h5 class="mb-0 text-secondary fw-bold" style="color: #12633e !important;">Top Agentlar</h5>
+                                </div>
+                                <div class="card-body p-0 table-responsive">
+                                    <table class="table table-hover table-borderless mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="ps-4">Agent</th>
+                                                <th class="text-end pe-4">Tushum</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="state.top_agents" t-as="agent" t-key="agent.name">
+                                                <tr class="align-middle border-bottom">
+                                                    <td class="ps-4 fw-bold text-dark"><i class="fa fa-user-circle me-2 text-muted"/> <t t-esc="agent.name"/></td>
+                                                    <td class="text-end pe-4 fw-bold text-primary"><t t-esc="formatPrice(agent.total)"/></td>
+                                                </tr>
+                                            </t>
+                                            <tr t-if="state.top_agents.length === 0">
+                                                <td colspan="2" class="text-center text-muted py-4">Hali sotuvlar yo'q</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top Products -->
+                        <div class="col-md-4 mb-4">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-header bg-white border-bottom">
+                                    <h5 class="mb-0 text-secondary fw-bold" style="color: #12633e !important;">Top Mahsulotlar</h5>
+                                </div>
+                                <div class="card-body p-0 table-responsive">
+                                    <table class="table table-hover table-borderless mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="ps-4">Mahsulot</th>
+                                                <th class="text-end pe-4">Tushum</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="state.top_products" t-as="prod" t-key="prod.name">
+                                                <tr class="align-middle border-bottom">
+                                                    <td class="ps-4 fw-bold text-dark"><i class="fa fa-cubes me-2 text-muted"/> <t t-esc="prod.name"/></td>
+                                                    <td class="text-end pe-4 fw-bold text-info"><t t-esc="formatPrice(prod.total)"/></td>
+                                                </tr>
+                                            </t>
+                                            <tr t-if="state.top_products.length === 0">
+                                                <td colspan="2" class="text-center text-muted py-4">Hali sotuvlar yo'q</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

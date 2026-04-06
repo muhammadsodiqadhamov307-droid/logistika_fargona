@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_van_trip" model="ir.actions.report">
+        <field name="name">Kun Hisoboti</field>
+        <field name="model">van.trip</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">van_sales_pharma.report_van_trip</field>
+        <field name="report_file">van_sales_pharma.report_van_trip</field>
+        <field name="print_report_name">'Kun_Hisoboti_%s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_van_trip"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_van_trip">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center mt-4">Agent Kun Hisoboti - <span t-field="doc.name"/></h2>
+                        
+                        <div class="row mt-4 mb-4">
+                            <div class="col-4">
+                                <strong>Sana:</strong> <span t-field="doc.date"/><br/>
+                                <strong>Holat:</strong> <span t-field="doc.state"/>
+                            </div>
+                            <div class="col-4">
+                                <strong>Agent:</strong> <span t-field="doc.agent_id.name"/><br/>
+                            </div>
+                        </div>
+
+                        <!-- 1. Moliyaviy Xulosa -->
+                        <h3>Moliyaviy Xulosa</h3>
+                        <table class="table table-sm table-bordered mt-2">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ko'rsatkich</th>
+                                    <th class="text-end">Kutilgan (Dastur)</th>
+                                    <th class="text-end">Topshirilgan (Haqiqat)</th>
+                                    <th class="text-end">Farq</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Naqt Pul</strong></td>
+                                    <td class="text-end"><span t-field="doc.x_cash_expected" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    <td class="text-end"><span t-field="doc.x_cash_received" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    <td class="text-end">
+                                        <span t-field="doc.x_difference" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Karta To'lovlar</strong></td>
+                                    <td class="text-end"><span t-field="doc.x_card_expected" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    <td class="text-end"><span t-field="doc.x_card_received" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    <td class="text-end">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Kredit (Nasiya) Jami</strong></td>
+                                    <td class="text-end" colspan="3"><span t-field="doc.x_nasiya_total" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- 2. Tovarlar Qoldig'i (Dori vositalari harakati) -->
+                        <h3 class="mt-4">Dori Vositalari Harakati</h3>
+                        <table class="table table-sm table-bordered mt-2">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mahsulot</th>
+                                    <th class="text-end">Olingan (Yuklangan)</th>
+                                    <th class="text-end">Sotilgan</th>
+                                    <th class="text-end">Qaytarilgan (Skladga)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.trip_line_ids" t-as="line">
+                                    <tr>
+                                        <td><span t-field="line.product_id.name"/></td>
+                                        <td class="text-end"><span t-field="line.loaded_qty"/></td>
+                                        <td class="text-end"><span t-field="line.sold_qty"/></td>
+                                        <td class="text-end"><span t-field="line.returned_qty"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- 3. Barcha Sotuvlar Ro'yxati -->
+                        <h3 class="mt-4">Kunlik Cheklar / Sotuvlar Ro'yxati</h3>
+                        <table class="table table-sm table-bordered mt-2">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Mijoz</th>
+                                    <th>Vaqt</th>
+                                    <th>To'lov Usuli</th>
+                                    <th class="text-end">Summa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.pos_order_ids.sorted(key=lambda o: o.date_order)" t-as="order">
+                                    <tr>
+                                        <td><span t-field="order.name"/></td>
+                                        <td><span t-field="order.partner_id.name"/></td>
+                                        <td><span t-field="order.date_order" t-options='{"widget": "datetime"}'/></td>
+                                        <td>
+                                            <t t-foreach="order.payment_ids" t-as="payment">
+                                                <span t-field="payment.payment_method_id.name"/><br/>
+                                            </t>
+                                        </td>
+                                        <td class="text-end"><span t-field="order.amount_total" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <strong>Kassir / Qabul Qiluvchi:</strong> <br/><br/><br/>
+                                _______________________
+                            </div>
+                            <div class="col-6 text-center">
+                                <strong>Savdo Agenti:</strong> <br/><br/><br/>
+                                _______________________<br/>
+                                <i>Imzo bilan topshirdi</i>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Asosiy menyu (Root Menu) -->
+    <menuitem id="menu_van_sales_root" name="Van Sales" web_icon="van_sales_pharma,static/description/icon.png" sequence="30"/>
+</odoo>

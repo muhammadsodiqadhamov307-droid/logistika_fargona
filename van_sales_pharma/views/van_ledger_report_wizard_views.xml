@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_van_ledger_report_wizard_form" model="ir.ui.view">
+        <field name="name">van.ledger.report.wizard.form</field>
+        <field name="model">van.ledger.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Mijoz Hisoboti" class="o_form_readonly">
+                <!-- If report_html is NOT set, show the input wizard -->
+                <group invisible="report_html">
+                    <group>
+                        <field name="partner_id" options="{'no_create': True}" placeholder="Mijozni tanlang..."/>
+                    </group>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                </group>
+                
+                <!-- If report_html is set, hide the inputs and show the majestic HTML -->
+                <field name="report_html" widget="html" nolabel="1" invisible="not report_html" readonly="1" options="{'readonly': True}"/>
+
+                <footer>
+                    <!-- Buttons when inputting data -->
+                    <button name="action_generate_report" string="Hisobotni Olish" type="object" class="btn-primary" invisible="report_html"/>
+                    
+                    <!-- Buttons when viewing the report -->
+                    <!-- We can just reload a new clean wizard if they want to reset -->
+                    <button string="Yangi Hisobot" class="btn-secondary" special="cancel" data-hotkey="z" invisible="not report_html"/>
+                    
+                    <!-- Standard close -->
+                    <button string="Bekor Qilish" class="btn-secondary" special="cancel" data-hotkey="z" invisible="report_html"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_van_ledger_report_wizard" model="ir.actions.act_window">
+        <field name="name">Mijoz Hisoboti</field>
+        <field name="res_model">van.ledger.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_van_ledger_report" 
+              name="Mijozlar hisoboti" 
+              parent="van_sales_pharma.menu_van_customers_root_folder" 
+              action="action_van_ledger_report_wizard" 
+              sequence="20"/>
+</odoo>

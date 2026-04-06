@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Record Rule for Agents to see only their requests -->
+    <record id="van_request_agent_rule" model="ir.rule">
+        <field name="name">Van Request Agent Rule</field>
+        <field name="model_id" ref="model_van_request"/>
+        <field name="domain_force">[('agent_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('van_sales_pharma.group_van_agent'))]"/>
+    </record>
+
+    <!-- Record Rule for Admin to see all requests -->
+    <record id="van_request_admin_rule" model="ir.rule">
+        <field name="name">Van Request Admin Rule</field>
+        <field name="model_id" ref="model_van_request"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('van_sales_pharma.group_van_admin'))]"/>
+    </record>
+
+    <record id="van_request_seq" model="ir.sequence">
+        <field name="name">Van Request Sequence</field>
+        <field name="code">van.request</field>
+        <field name="prefix">REQ/%(year)s/</field>
+        <field name="padding">5</field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_van_request_tree" model="ir.ui.view">
+        <field name="name">van.request.tree</field>
+        <field name="model">van.request</field>
+        <field name="arch" type="xml">
+            <list string="So'rovlar" decoration-info="state == 'draft'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="agent_id"/>
+                <field name="partner_id"/>
+                <field name="total_amount" sum="Jami Summa"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_van_request_form" model="ir.ui.view">
+        <field name="name">van.request.form</field>
+        <field name="model">van.request</field>
+        <field name="arch" type="xml">
+            <form string="So'rov">
+                <header>
+                    <button name="action_xarid" string="🛒 Xarid" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_done" string="Bajarildi" type="object" class="btn-secondary" invisible="state != 'draft'"/>
+                    <button name="action_cancel" string="Bekor qilish" type="object" invisible="state != 'draft'"/>
+                    <button name="action_draft" string="Qoralama qilib qaytarish" type="object" invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done,cancel"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="agent_id"/>
+                            <field name="date"/>
+                        </group>
+                        <group>
+                            <field name="total_amount" widget="monetary"/>
+                            <field name="fulfilled_date" invisible="not fulfilled_date"/>
+                            <field name="sale_order_id" invisible="not sale_order_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Mahsulotlar" name="lines">
+                            <field name="line_ids" readonly="state == 'done' or state == 'cancel'">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="qty"/>
+                                    <field name="price"/>
+                                    <field name="subtotal" sum="Jami"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Izohlar" name="notes">
+                            <field name="notes" placeholder="Qo'shimcha izohlar kiritish..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_van_request" model="ir.actions.act_window">
+        <field name="name">So'rovlar</field>
+        <field name="res_model">van.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Hali so'rovlar mavjud emas.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item (Will display correctly once added to __manifest__.py) -->
+    <menuitem id="menu_van_request" name="So'rovlar" parent="menu_van_sales_root" action="action_van_request" sequence="60"/>
+</odoo>

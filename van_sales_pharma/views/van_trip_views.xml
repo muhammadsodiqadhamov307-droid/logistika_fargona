@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Muloqot va Trip Form View -->
+    <record id="view_van_trip_form" model="ir.ui.view">
+        <field name="name">van.trip.form</field>
+        <field name="model">van.trip</field>
+        <field name="arch" type="xml">
+            <form string="Mahsulot yuklash">
+                <header>
+                    <button name="action_validate" string="Tasdiqlash" type="object" class="btn-success" invisible="state != 'draft'"/>
+                    <button name="action_cancel" string="Bekor Qilish" type="object" class="btn-danger" invisible="state != 'validated'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,validated"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="taminotchi_id" required="1" readonly="state != 'draft'"/>
+                            <field name="agent_id" readonly="state != 'draft'"/>
+                            <field name="location_id" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="date" readonly="state != 'draft'"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Yuklanayotgan Mahsulotlar">
+                            <field name="trip_line_ids" readonly="state != 'draft'">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="loaded_qty"/>
+
+                                    <field name="price_unit" string="Narx (Kelish)" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="sale_price_unit" string="Narx (Sotish)" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="price_subtotal" sum="Total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="amount_cost_total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <div class="oe_clear"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_van_trip_tree" model="ir.ui.view">
+        <field name="name">van.trip.list</field>
+        <field name="model">van.trip</field>
+        <field name="arch" type="xml">
+            <list string="Barcha Mahsulot Yuklashlar" decoration-muted="state == 'draft'" decoration-success="state == 'validated'">
+                <field name="name"/>
+                <field name="taminotchi_id" optional="show"/>
+                <field name="agent_id"/>
+                <field name="date"/>
+                <field name="state" widget="badge"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_van_trip_all" model="ir.actions.act_window">
+        <field name="name">Barcha Mahsulot Yuklashlar</field>
+        <field name="res_model">van.trip</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_van_trip_mine" model="ir.actions.act_window">
+        <field name="name">Mening Yuklashlarim</field>
+        <field name="res_model">van.trip</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('agent_id', '=', uid)]</field>
+    </record>
+</odoo>

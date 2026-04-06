@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="agent_select_template" name="Agent Selection">
+        <html style="background-color: #f3f4f6;">
+            <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+                <title>Agentni Tanlang | Mobil POS</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+            </head>
+            <body style="background-color: #f3f4f6;">
+                <div class="container py-5">
+                    <div class="text-center mb-5">
+                        <h2 class="fw-bold" style="color: #1f2937;">Agentni Tanlang</h2>
+                        <p class="text-secondary">Boshqariladigan diler profilini tanlang</p>
+                    </div>
+                    
+                    <div class="row g-4 justify-content-center">
+                        <t t-foreach="agents" t-as="agent">
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <a t-attf-href="/van/mobile-pos/select-agent?agent_id={{ agent.id }}" style="text-decoration: none;">
+                                    <div class="card h-100 text-center border-0 shadow-sm" style="border-radius: 12px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                                        <div class="card-body p-4">
+                                            <img t-attf-src="/web/image?model=res.users&amp;id={{ agent.id }}&amp;field=avatar_128" class="rounded-circle mb-3 border" style="width: 80px; height: 80px; object-fit: cover; border-width: 3px !important; border-color: #e5e7eb !important;"/>
+                                            <h5 class="fw-bold mb-1" style="color: #111827; font-size: 1.1rem;"><t t-esc="agent.name"/></h5>
+                                            <p class="text-muted small mb-3"><t t-esc="agent.login"/></p>
+                                            <div style="background: #f3f4f6; color: #374151; font-weight: bold; font-size: 13px; padding: 6px 12px; border-radius: 8px; display: inline-block;">
+                                                <t t-esc="'{:,.0f}'.format(agent.oylik_balansi)"/> so'm
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </t>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <a href="/web#action=van_sales_pharma.action_van_sales_dashboard" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 8px; font-weight: bold;">
+                            Orqaga (Bosh Panel)
+                        </a>
+                    </div>
+                </div>
+            </body>
+        </html>
+    </template>
+</odoo>

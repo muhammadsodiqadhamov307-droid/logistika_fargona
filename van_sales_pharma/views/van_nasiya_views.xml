@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Nasiya Form View -->
+    <record id="view_van_nasiya_form" model="ir.ui.view">
+        <field name="name">van.nasiya.form</field>
+        <field name="model">van.nasiya</field>
+        <field name="arch" type="xml">
+            <form string="Nasiya / Qarz">
+                <header>
+                    <button name="action_register_payment" string="Qarzni To'lash" type="object" class="btn-success" invisible="state == 'paid'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="open,partial,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="agent_id" readonly="1"/>
+                            <field name="sale_order_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="date" readonly="1"/>
+                            <field name="invoice_id" readonly="1"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group class="oe_subtotal_footer oe_right" colspan="2">
+                        <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_paid" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_residual" class="oe_subtotal_footer_separator text-danger" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_van_nasiya_tree" model="ir.ui.view">
+        <field name="name">van.nasiya.tree</field>
+        <field name="model">van.nasiya</field>
+        <field name="arch" type="xml">
+            <list string="Nasiyalar" decoration-muted="state == 'paid'" decoration-danger="state == 'open'" decoration-warning="state == 'partial'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+                <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="amount_residual" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="state" widget="badge"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_van_nasiya_all" model="ir.actions.act_window">
+        <field name="name">Barcha Nasiyalar</field>
+        <field name="res_model">van.nasiya</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_van_nasiya_mine" model="ir.actions.act_window">
+        <field name="name">Mening Nasiyalarim</field>
+        <field name="res_model">van.nasiya</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('agent_id', '=', uid)]</field>
+    </record>
+</odoo>

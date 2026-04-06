@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="van_sales_pharma.GpsCaptureWidget">
+        <div class="o_gps_capture_widget d-flex align-items-center gap-2 flex-wrap py-1">
+
+            <!-- GPS capture button (only in edit mode) -->
+            <button t-if="!props.readonly"
+                    class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
+                    t-on-click="captureLocation"
+                    t-att-disabled="state.loading">
+                <span t-if="state.loading"
+                      class="spinner-border spinner-border-sm"
+                      role="status"/>
+                <i t-else="" class="fa fa-map-marker"/>
+                <span t-if="state.loading">Aniqlanmoqda...</span>
+                <span t-else="">Joylashuvni Aniqlash</span>
+            </button>
+
+            <!-- Coordinates + Maps button -->
+            <t t-if="hasLocation">
+                <span class="text-muted small font-monospace">
+                    <i class="fa fa-crosshairs me-1"/>
+                    <t t-esc="coordsLabel"/>
+                </span>
+                <button class="btn btn-sm btn-success d-flex align-items-center gap-1"
+                        t-on-click="openGoogleMaps">
+                    <i class="fa fa-map me-1"/>Google Maps da Ko'rish
+                </button>
+            </t>
+            <t t-else="">
+                <span class="text-muted small fst-italic">Joylashuv kiritilmagan</span>
+            </t>
+
+            <!-- Error -->
+            <span t-if="state.error" class="text-danger small">
+                <i class="fa fa-exclamation-triangle me-1"/>
+                <t t-esc="state.error"/>
+            </span>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================
+         AGENT SUMMARY — LIST VIEW
+    ============================================================ -->
+    <record id="view_van_agent_summary_list" model="ir.ui.view">
+        <field name="name">van.agent.summary.list</field>
+        <field name="model">van.agent.summary</field>
+        <field name="arch" type="xml">
+            <list string="Agentlar Hisoboti"
+                  create="0" edit="0"
+                  decoration-success="total_sales > 0"
+                  decoration-muted="total_sales == 0">
+                <field name="agent_id"/>
+                <field name="date_from" optional="show"/>
+                <field name="date_to" optional="show"/>
+                <field name="pos_order_count" string="Sotuvlar"/>
+                <field name="total_sales"
+                       widget="monetary"
+                       options="{'currency_field': 'currency_id'}"
+                       decoration-bf="1"/>
+                <field name="total_cash"
+                       widget="monetary"
+                       options="{'currency_field': 'currency_id'}"/>
+                <field name="total_nasiya"
+                       widget="monetary"
+                       options="{'currency_field': 'currency_id'}"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         AGENT SUMMARY — FORM VIEW (rich profile)
+    ============================================================ -->
+    <record id="view_van_agent_summary_form" model="ir.ui.view">
+        <field name="name">van.agent.summary.form</field>
+        <field name="model">van.agent.summary</field>
+        <field name="arch" type="xml">
+            <form string="Agent Hisobot" create="0">
+                <header>
+                    <button name="action_rebuild_inventory" 
+                            string="🔄 Inventarni Qayta Tiklash"
+                            type="object"
+                            class="btn-warning"
+                            help="Sayohat (Yuklash) tarixidan inventarni va qoldiqlarni aniq qayta hisoblash"
+                            groups="van_sales_pharma.group_van_admin"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_inventory_kanban" icon="fa-cubes">
+                            <field name="inventory_count" widget="statinfo" string="Inventar"/>
+                        </button>
+                    </div>
+                    <!-- Agent title -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="agent_id" readonly="1"/>
+                        </h1>
+                        <div class="row mt-3 mb-4">
+                            <div class="col-12 d-flex flex-wrap align-items-center gap-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="input-group input-group-sm bg-white rounded shadow-sm" style="width: auto;">
+                                        <span class="input-group-text bg-light border-0" title="Sana oralig'i"><i class="fa fa-calendar text-muted" title="Sana oralig'i"></i></span>
+                                        <field name="date_from" widget="date" nolabel="1" class="form-control border-0" style="min-width: 120px; text-align: center;"/>
+                                        <span class="input-group-text bg-light border-0 text-muted">dan</span>
+                                        <field name="date_to" widget="date" nolabel="1" class="form-control border-0" style="min-width: 120px; text-align: center;"/>
+                                        <span class="input-group-text bg-light border-0 text-muted">gacha</span>
+                                    </div>
+                                    <button name="action_apply_filter" type="object" string="Filtrlash" icon="fa-search" class="btn btn-primary btn-sm shadow-sm"/>
+                                    <button name="action_clear_filter" type="object" string="Tozalash" icon="fa-times" class="btn btn-outline-secondary btn-sm shadow-sm ms-2"/>
+                                    <button name="action_refresh_data" type="object" string="Yangilash" icon="fa-refresh" class="btn btn-outline-primary btn-sm shadow-sm ms-2"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KPI summary bar -->
+                    <div class="row mb-4 oe_kanban_colorpicker justify-content-center">
+                        <div class="col-md-3 col-6 text-center border-end mb-3">
+                            <small class="text-muted">Sotuvlar</small>
+                            <h4 class="fw-bold text-primary">
+                                <field name="pos_order_count" readonly="1"/>
+                            </h4>
+                        </div>
+                        <div class="col-md-3 col-6 text-center border-end mb-3">
+                            <small class="text-muted">Jami Sotuv</small>
+                            <h4 class="fw-bold text-success">
+                                <field name="total_sales"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"/>
+                            </h4>
+                        </div>
+                        <div class="col-md-3 col-6 text-center border-end mb-3">
+                            <small class="text-muted">💵 Naqt</small>
+                            <h4 class="fw-bold" style="color:#198754">
+                                <field name="total_cash"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"/>
+                            </h4>
+                        </div>
+                        <div class="col-md-3 col-6 text-center border-end mb-3">
+                            <small class="text-muted">📋 Nasiya</small>
+                            <h4 class="fw-bold" style="color:#e0a800">
+                                <field name="total_nasiya"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"/>
+                            </h4>
+                        </div>
+
+                        <!-- Row 2 -->
+                        <div class="col-md-3 col-6 text-center border-end mb-3">
+                            <small class="text-muted">📋 Jami Nasiya</small>
+                            <h4 class="fw-bold text-danger">
+                                <field name="jami_nasiya"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"/>
+                            </h4>
+                        </div>
+                        <div class="col-md-3 col-6 text-center border-end mb-3">
+                            <small class="text-muted">📉 Chiqim</small>
+                            <h4 class="fw-bold text-danger">
+                                <field name="total_chiqim"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"/>
+                            </h4>
+                        </div>
+                        <div class="col-md-3 col-6 text-center border-end mb-3">
+                            <small class="text-muted">💰 Sof Balans</small>
+                            <h4 class="fw-bold text-info">
+                                <field name="sof_balans"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"
+                                       decoration-bf="1"/>
+                            </h4>
+                        </div>
+                        <div class="col-md-3 col-6 text-center border-end mb-3" groups="van_sales_pharma.group_van_admin">
+                            <small class="text-muted" style="color: #0d9488 !important;">💹 Yalpi (Kassa)</small>
+                            <h4 class="fw-bold" style="color: #0f766e;">
+                                <field name="yalpi_balans"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"/>
+                            </h4>
+                        </div>
+                        <div class="col-md-3 col-6 text-center mb-3" groups="van_sales_pharma.group_van_admin">
+                            <small class="text-muted" style="color: #0d9488 !important;">💹 Foyda</small>
+                            <h4 class="fw-bold" style="color: #0f766e;">
+                                <field name="total_foyda"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"/>
+                            </h4>
+                        </div>
+
+                        <!-- Row 3: Commission Info -->
+                        <div class="col-md-3 col-6 text-center border-end mb-3">
+                            <small class="text-muted" style="color: #4338ca !important;">💵 Ishlab Topilgan Oylik</small>
+                            <h4 class="fw-bold" style="color: #3730a3;">
+                                <field name="agent_oyligi_earned"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"/>
+                            </h4>
+                        </div>
+                        <div class="col-md-3 col-6 text-center border-end mb-3">
+                            <small class="text-muted" style="color: #ef4444 !important;">📥 Oylik Olindi</small>
+                            <h4 class="fw-bold" style="color: #b91c1c;">
+                                <field name="oylik_olindi"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"/>
+                            </h4>
+                        </div>
+                        <div class="col-md-3 col-6 text-center border-end mb-3 d-flex flex-column justify-content-center align-items-center">
+                            <small class="text-muted" style="color: #059669 !important;">💸 Oylik Qoldig'i</small>
+                            <h4 class="fw-bold" style="color: #047857;">
+                                <field name="oylik_qoldigi"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"/>
+                            </h4>
+                        </div>
+
+                        <div class="col-md-3 col-12 text-center mb-3 d-flex flex-column justify-content-center align-items-center" style="background: rgba(139, 92, 246, 0.1); border-radius: 8px; padding: 15px;" groups="van_sales_pharma.group_van_admin">
+
+                            <small class="text-muted" style="color: #6b21a8 !important; font-size: 1.1em;">💰 Agentdan qoladigan</small>
+                            <h4 class="fw-bold m-0 mt-2" style="color: #7c3aed; font-size: 1.5em;" decoration-danger="qoladigan_pul &lt; 0">
+                                <field name="qoladigan_pul"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"/>
+                            </h4>
+                        </div>
+                    </div>
+
+                    <field name="currency_id" invisible="1"/>
+
+                    <notebook>
+                        <page string="Mobil POS Sotuvlar" name="pos_orders">
+                            <field name="pos_order_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="partner_id"/>
+                                    <field name="amount_total" sum="Jami Sotuv" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="state" widget="badge" 
+                                           decoration-info="state == 'draft'" 
+                                           decoration-success="state == 'done'"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Kirimlar" name="kirimlar">
+                            <div class="mb-2">
+                                <button string="Kirimlar Ro'yxati" type="object" name="action_view_kirimlar" class="btn btn-sm btn-outline-success" icon="fa-arrow-down"/>
+                            </div>
+                            <field name="kirim_ids" readonly="1">
+                                <list string="Kirimlar" decoration-success="1">
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="partner_id" optional="show"/>
+                                    <field name="payment_method"/>
+                                    <field name="amount" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Jami Kirim"/>
+                                    <field name="note" optional="show"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Chiqimlar" name="chiqimlar">
+                            <div class="mb-2">
+                                <button string="Chiqimlarni Boshqarish (O'chirish)" type="object" name="action_view_chiqimlar" class="btn btn-sm btn-outline-danger" icon="fa-trash"/>
+                            </div>
+                            <field name="chiqim_ids" readonly="1">
+                                <list string="Chiqimlar" decoration-danger="1">
+                                    <field name="name" string="To'lov Raqami"/>
+                                    <field name="date" string="Sana"/>
+                                    <field name="partner_id" string="Kirim Qilgan Mijoz" optional="show"/>
+                                    <field name="payment_method" string="To'lov Usuli"/>
+                                    <field name="amount" string="Mablag'" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Jami Chiqim"/>
+                                    <field name="note" string="Izoh" optional="show"/>
+                                    <field name="state" string="Holat" widget="badge"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Oylik To'lovlar" name="oylik_chiqimlar">
+                            <field name="oylik_chiqim_ids" readonly="1">
+                                <list string="Oylik To'lovlar" decoration-warning="1" default_order="date desc">
+                                    <field name="name" string="To'lov Raqami"/>
+                                    <field name="date" string="Sana"/>
+                                    <field name="partner_id" string="Kirim Qilgan Mijoz" optional="hide"/>
+                                    <field name="payment_method" string="To'lov Usuli"/>
+                                    <field name="amount" string="Mablag'" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Jami Oylik To'lov"/>
+                                    <field name="note" string="Izoh" optional="show"/>
+                                    <field name="state" string="Holat" widget="badge"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         AGENT SUMMARY — INVENTORY DASHBOARD (Hybrid Form + Kanban)
+    ============================================================ -->
+    <record id="view_van_agent_summary_inventory_dashboard" model="ir.ui.view">
+        <field name="name">van.agent.summary.inventory.dashboard</field>
+        <field name="model">van.agent.summary</field>
+        <field name="arch" type="xml">
+            <form string="Agent Inventari" create="0">
+                <sheet>
+                    <div class="row mb-4">
+                        <div class="col-12 col-md-4">
+                            <div class="card text-center text-bg-success shadow-sm" style="border: none; border-radius: 8px;">
+                                <div class="card-body">
+                                    <h6 class="card-title text-uppercase text-white-50 mb-1" style="font-size: 0.85rem; font-weight: 600;">Jami Summa (Sotuv Narxida)</h6>
+                                    <h2 class="mb-0 text-white" style="font-weight: 700;"><field name="total_inventory_value" widget="monetary" options="{'currency_field': 'currency_id'}"/></h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="card text-center text-bg-warning shadow-sm" style="border: none; border-radius: 8px;">
+                                <div class="card-body">
+                                    <h6 class="card-title text-uppercase text-dark-50 mb-1" style="font-size: 0.85rem; font-weight: 600;">Kutilayotgan Foyda</h6>
+                                    <h2 class="mb-0 text-dark" style="font-weight: 700;"><field name="expected_net_profit" widget="monetary" options="{'currency_field': 'currency_id'}"/></h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="card text-center text-bg-danger shadow-sm" style="border: none; border-radius: 8px;">
+                                <div class="card-body">
+                                    <h6 class="card-title text-uppercase text-white-50 mb-1" style="font-size: 0.85rem; font-weight: 600;">Jami Summa (Olish Narxida)</h6>
+                                    <h2 class="mb-0 text-white" style="font-weight: 700;"><field name="total_inventory_cost_value" widget="monetary" options="{'currency_field': 'currency_id'}"/></h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4 class="mt-4 mb-3 border-bottom pb-2">Olib Yurgan Mahsulotlar Ro'yxati</h4>
+                    
+                    <field name="active_inventory_line_ids">
+                        <kanban class="o_kanban_mobile" create="0" sample="1">
+                            <field name="product_id"/>
+                            <field name="remaining_qty"/>
+                            <field name="cost_price"/>
+                            <field name="price_unit"/>
+                            <field name="currency_id"/>
+
+                            <templates>
+                                <t t-name="card" class="flex-row">
+                                    <aside class="o_kanban_aside_full" style="width: 85px; text-align: center; padding-top: 15px;">
+                                        <img t-attf-src="/web/image?model=van.product&amp;id={{record.product_id.raw_value}}&amp;field=image_1920" alt="Mahsulot Rasmi" style="width: 64px; height: 64px; object-fit: cover; margin: 0 auto; display: block; border-radius: 4px;"/>
+                                    </aside>
+                                    <main class="ms-3 pe-2 w-100">
+                                        <strong class="o_kanban_record_title" style="font-size: 1.1em; font-weight:bold;">
+                                            <field name="product_id"/>
+                                        </strong>
+                                        <div class="mt-2 text-muted" style="font-size: 0.9em;">
+                                            <i class="fa fa-cubes me-1"/> Qoldiq: 
+                                            <span class="text-primary fw-bold float-end"><field name="remaining_qty"/></span>
+                                        </div>
+                                        <div class="text-muted mt-1" style="font-size: 0.9em;" groups="van_sales_pharma.group_van_admin">
+                                            <i class="fa fa-download me-1"/> Kelish narxi: 
+                                            <span class="text-danger fw-bold float-end"><field name="cost_price" widget="monetary"/></span>
+                                        </div>
+                                        <div class="text-muted mt-1" style="font-size: 0.9em;">
+                                            <i class="fa fa-tag me-1"/> Sotish narxi: 
+                                            <span class="text-success fw-bold float-end"><field name="price_unit" widget="monetary"/></span>
+                                        </div>
+                                    </main>
+                                </t>
+                            </templates>
+                        </kanban>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         AGENT SUMMARY — KANBAN VIEW (Beautiful Cards)
+    ============================================================ -->
+    <record id="view_van_agent_summary_kanban" model="ir.ui.view">
+        <field name="name">van.agent.summary.kanban</field>
+        <field name="model">van.agent.summary</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" create="0">
+                <field name="agent_id"/>
+                <field name="total_sales"/>
+                <field name="total_balance"/>
+                <field name="pos_order_count"/>
+                <field name="currency_id"/>
+                <templates>
+                    <t t-name="card" class="flex-row">
+                        <aside class="o_kanban_aside_full" style="width: 85px; text-align: center; padding-top: 15px;">
+                            <img t-attf-src="/web/image?model=res.users&amp;id={{record.agent_id.raw_value}}&amp;field=avatar_128" alt="Avatar" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block;"/>
+                        </aside>
+                        <main class="ms-3 pe-2 w-100">
+                            <strong class="o_kanban_record_title" style="font-size: 1.2em; font-weight:bold;">
+                                <field name="agent_id"/>
+                            </strong>
+                            <div class="mt-2">
+                                <span class="text-muted"><i class="fa fa-shopping-cart me-1"/> Sotuvlar: </span>
+                                <span class="fw-bold"><field name="pos_order_count"/></span>
+                            </div>
+                            <div>
+                                <span class="text-muted"><i class="fa fa-money me-1"/> Jami Sotuv: </span>
+                                <span class="fw-bold text-success"><field name="total_sales" widget="monetary"/></span>
+                            </div>
+                            <div class="mt-2 pt-2 border-top">
+                                <span class="text-muted"><i class="fa fa-bank me-1"/> Yalpi Balans: </span>
+                                <span class="fw-bold text-primary" style="font-size: 1.1em;"><field name="yalpi_balans" widget="monetary"/></span>
+                            </div>
+                            <div class="mt-1">
+                                <span class="text-muted"><i class="fa fa-money me-1"/> Sof Balans: </span>
+                                <span class="fw-bold text-info" style="font-size: 1.1em;"><field name="sof_balans" widget="monetary"/></span>
+                            </div>
+                            <div class="mt-1 border-top pt-1 text-center">
+                                <span class="text-muted" style="color: #6b21a8 !important; display: block; font-size: 0.9em;"><i class="fa fa-wallet me-1"/> Qolgan Oylik Haq: </span>
+                                <span class="fw-bold" style="font-size: 1.2em; color: #7c3aed;"><field name="oylik_qoldigi" widget="monetary"/></span>
+                            </div>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         AGENT INVENTORY LINE — KANBAN VIEW
+    ============================================================ -->
+    <record id="view_van_agent_inventory_line_kanban" model="ir.ui.view">
+        <field name="name">van.agent.inventory.line.kanban</field>
+        <field name="model">van.agent.inventory.line</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" create="0" sample="1">
+                <field name="product_id"/>
+                <field name="remaining_qty"/>
+                <field name="cost_price"/>
+                <field name="price_unit"/>
+                <field name="currency_id"/>
+
+                <templates>
+                    <t t-name="card" class="flex-row">
+                        <aside class="o_kanban_aside_full" style="width: 85px; text-align: center; padding-top: 15px;">
+                            <img t-attf-src="/web/image?model=van.product&amp;id={{record.product_id.raw_value}}&amp;field=image_1920" alt="Mahsulot Rasmi" style="width: 64px; height: 64px; object-fit: cover; margin: 0 auto; display: block; border-radius: 4px;"/>
+                        </aside>
+                        <main class="ms-3 pe-2 w-100">
+                            <strong class="o_kanban_record_title" style="font-size: 1.1em; font-weight:bold;">
+                                <field name="product_id"/>
+                            </strong>
+                            <div class="mt-2 d-flex flex-column gap-1" style="font-size: 0.95em;">
+                                <div class="d-flex justify-content-between border-bottom pb-1">
+                                    <span class="text-muted"><i class="fa fa-cubes me-1"/> Qoldiq:</span>
+                                    <span class="fw-bold text-primary"><field name="remaining_qty"/></span>
+                                </div>
+                                <div class="d-flex justify-content-between border-bottom pb-1">
+                                    <span class="text-muted"><i class="fa fa-download me-1"/> Kelish narxi:</span>
+                                    <span class="fw-bold text-danger"><field name="cost_price" widget="monetary" options="{'currency_field': 'currency_id'}"/></span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted"><i class="fa fa-tag me-1"/> Sotish narxi:</span>
+                                    <span class="fw-bold text-success"><field name="price_unit" widget="monetary" options="{'currency_field': 'currency_id'}"/></span>
+                                </div>
+                            </div>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         AGENT INVENTORY LINE — FORM VIEW
+    ============================================================ -->
+    <record id="view_van_agent_inventory_line_form" model="ir.ui.view">
+        <field name="name">van.agent.inventory.line.form</field>
+        <field name="model">van.agent.inventory.line</field>
+        <field name="arch" type="xml">
+            <form string="Inventar Tafsiloti" create="0">
+                <sheet>
+                    <div class="row">
+                         <div class="col-3 text-center">
+                            <field name="product_id" widget="image" options="{'preview_image': 'image_128'}" class="oe_avatar ms-3"/>
+                         </div>
+                         <div class="col-9">
+                            <div class="oe_title">
+                                <h1><field name="product_id" readonly="1"/></h1>
+                            </div>
+                            <group>
+                                <group>
+                                    <field name="price_unit" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="cost_price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+        
+                                </group>
+                                <group>
+                                    <field name="subtotal_sold" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </group>
+                            </group>
+                         </div>
+                    </div>
+                    <notebook>
+                        <page string="Harakatlar" name="movements">
+                            <group>
+                                <group>
+                                    <field name="loaded_qty"/>
+                                    <field name="sold_qty"/>
+                                </group>
+                                <group>
+                                    <field name="returned_qty"/>
+                                    <field name="remaining_qty" decoration-bf="1" decoration-info="remaining_qty > 0" decoration-warning="remaining_qty &lt;= 0"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         ACTION (SERVER)
+    ============================================================ -->
+    <record id="action_van_agent_summary_server" model="ir.actions.server">
+        <field name="name">Agentlar Hisoboti</field>
+        <field name="model_id" ref="model_van_agent_summary"/>
+        <field name="state">code</field>
+        <field name="code">
+action = env['van.agent.summary'].action_setup_summary()
+        </field>
+    </record>
+
+    <!-- ============================================================
+         AGENT MANAGEMENT (RES.USERS)
+    ============================================================ -->
+    <record id="view_van_agent_user_tree" model="ir.ui.view">
+        <field name="name">res.users.agent.tree</field>
+        <field name="model">res.users</field>
+        <field name="arch" type="xml">
+            <list string="Agentlar Ro'yxati">
+                <field name="name"/>
+                <field name="login"/>
+                <field name="x_phone"/>
+
+            </list>
+        </field>
+    </record>
+
+    <record id="view_van_agent_user_form" model="ir.ui.view">
+        <field name="name">res.users.agent.form</field>
+        <field name="model">res.users</field>
+        <field name="arch" type="xml">
+            <form string="Agent">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name" required="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Ma'lumotlar">
+                            <field name="login"/>
+                            <field name="password" password="True" required="0"/>
+                            <field name="x_phone"/>
+                            <field name="default_taminotchi_id"/>
+                        </group>
+                        <group string="Oylik (Komissiya)">
+                            <field name="komissiya_foizi"/>
+                            <field name="oylik_balansi" readonly="1" decoration-bf="1" decoration-info="oylik_balansi > 0" widget="monetary" options="{'currency_field': 'x_currency_id'}"/>
+                        </group>
+                        <group string="Kompaniya">
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Mijozlar" name="mijozlar">
+                            <field name="mijoz_ids" domain="[('x_is_van_customer', '=', True)]" context="{'form_view_ref': 'van_sales_pharma.view_van_customer_form_v2', 'tree_view_ref': 'van_sales_pharma.view_van_customer_list_v2', 'default_x_is_van_customer': True, 'default_customer_rank': 1, 'default_is_company': False}">
+                                <list string="Tayinlangan Mijozlar">
+                                    <field name="name"/>
+                                    <field name="phone" optional="show"/>
+                                    <field name="x_van_balance" widget="monetary" string="Balansi"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Ostatka Inventar">
+                            <field name="ostatka_ids">
+                                <list string="Ostatka Inventar" editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="qty" sum="Jami mahsulotlar soni"/>
+                                    <field name="kelish_narxi"/>
+                                    <field name="sotish_narxi"/>
+                                    <field name="jami" sum="Jami kelish narxida" readonly="1" force_save="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_van_agents_list" model="ir.actions.act_window">
+        <field name="name">Agentlar</field>
+        <field name="res_model">res.users</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_van_agent_user_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_van_agent_user_form')})]"/>
+        <field name="domain">[('share', '=', False)]</field>
+        <field name="context" eval="{'default_share': False, 'default_groups_id': [(4, ref('base.group_user'))]}"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Yangi agent qo'shish.
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         INHERIT STANDARD USER FORM FOR ROLE SELECTION
+    ============================================================ -->
+    <record id="view_users_form_van_sales" model="ir.ui.view">
+        <field name="name">res.users.form.van.sales.inherit</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='access_rights']//group" position="inside">
+                <group string="Van Sales">
+                    <field name="group_ids" widget="many2many_tags" 
+                           options="{'no_create': True}"
+                           placeholder="Role tanlang..."/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
