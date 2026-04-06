@@ -116,7 +116,7 @@ class VanPosOrder(models.Model):
             
             # Snap the commission amount so it doesn't fluctuate if the admin changes the agent percentage later
             # Calculate commission based on original 'sotish narxi' (list_price) regardless of discounted actual price
-            original_price_total = sum(line.product_id.list_price * line.qty for line in order.line_ids)
+            original_price_total = sum((line.original_price_unit or line.product_id.list_price) * line.qty for line in order.line_ids)
             order.commission_amount = original_price_total * (order.agent_id.komissiya_foizi / 100.0)
             
             order.state = 'done'
@@ -170,17 +170,48 @@ class VanPosOrderLine(models.Model):
     product_id = fields.Many2one('van.product', string='Mahsulot', required=True)
     qty = fields.Float(string='Miqdor', required=True, default=1.0)
     price_unit = fields.Float(string='Narx', required=True)
+    original_price_unit = fields.Float(
+        string='Asl Sotish Narxi',
+        help="Mahsulotning chegirmasiz sotish narxi. Hisobotlarda discount va standard margin hisoblash uchun saqlanadi.",
+    )
     
     subtotal = fields.Monetary(string='Oraliq Summa', compute='_compute_subtotal', store=True, currency_field='currency_id')
+    standard_subtotal = fields.Monetary(
+        string='Sotish Narxida Summa',
+        compute='_compute_standard_amounts',
+        store=True,
+        currency_field='currency_id',
+    )
+    discount_amount = fields.Monetary(
+        string='Chegirma',
+        compute='_compute_standard_amounts',
+        store=True,
+        currency_field='currency_id',
+    )
     
     # Cost and Margin
     cost_price = fields.Float(string='Kelish Narxi', related='product_id.cost_price', readonly=True, store=True)
     margin = fields.Monetary(string='Foyda', compute='_compute_margin', store=True, currency_field='currency_id')
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('original_price_unit') in (None, False):
+                product = self.env['van.product'].browse(vals.get('product_id'))
+                vals['original_price_unit'] = product.list_price if product else vals.get('price_unit', 0.0)
+        return super().create(vals_list)
+
     @api.depends('qty', 'price_unit')
     def _compute_subtotal(self):
         for line in self:
             line.subtotal = line.qty * line.price_unit
+
+    @api.depends('qty', 'price_unit', 'original_price_unit')
+    def _compute_standard_amounts(self):
+        for line in self:
+            standard_price = line.original_price_unit or line.price_unit
+            line.standard_subtotal = line.qty * standard_price
+            line.discount_amount = max(line.standard_subtotal - line.subtotal, 0.0)
 
     @api.depends('qty', 'price_unit', 'cost_price')
     def _compute_margin(self):

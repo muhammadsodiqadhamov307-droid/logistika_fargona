@@ -24,3 +24,4 @@ from . import van_ostatka_qarzi
 from . import van_ledger_report_wizard
 from . import van_agent_ostatka
 from . import van_salary_payout
+from . import van_sold_product_report_wizard

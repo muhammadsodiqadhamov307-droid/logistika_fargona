@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_van_sold_product_report_wizard_form" model="ir.ui.view">
+        <field name="name">van.sold.product.report.wizard.form</field>
+        <field name="model">van.sold.product.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Sotilgan Tovarlar Hisoboti" create="0" edit="0" delete="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group invisible="not line_ids">
+                            <field name="total_qty" readonly="1"/>
+                            <field name="total_standard_amount" readonly="1"/>
+                            <field name="total_cost_amount" readonly="1"/>
+                            <field name="total_margin_amount" readonly="1"/>
+                            <field name="total_actual_amount" readonly="1"/>
+                            <field name="total_discount_amount" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <field name="line_ids" nolabel="1" readonly="1" invisible="not line_ids">
+                        <list create="0" edit="0" delete="0">
+                            <field name="product_id"/>
+                            <field name="qty" sum="Jami Miqdor"/>
+                            <field name="standard_amount" sum="Jami" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="cost_amount" sum="Jami" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="margin_amount" sum="Jami" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="actual_amount" sum="Jami" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="discount_amount" sum="Jami" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        </list>
+                    </field>
+                </sheet>
+                <footer>
+                    <button name="action_generate_report" string="Validate" type="object" class="btn-primary"/>
+                    <button name="action_clear_report" string="Tozalash" type="object" class="btn-secondary" invisible="not line_ids"/>
+                    <button string="Yopish" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_van_sold_product_report_wizard" model="ir.actions.act_window">
+        <field name="name">Sotilgan Tovarlar Hisoboti</field>
+        <field name="res_model">van.sold.product.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_van_sold_product_report"
+              name="Sotilgan Tovarlar Hisoboti"
+              parent="van_sales_pharma.menu_van_sales_root"
+              action="action_van_sold_product_report_wizard"
+              sequence="35"/>
+</odoo>

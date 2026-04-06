@@ -74,6 +74,7 @@ class PosOrder(models.Model):
             'product_id': van_product.id,
             'qty': pos_line.qty,
             'price_unit': unit_price,
+            'original_price_unit': van_product.list_price,
         })
 
     def _sync_to_van_pos_order(self):

@@ -28,6 +28,7 @@
         'views/van_request_views.xml',
         'views/van_taminotchi_views.xml',
         'views/van_salary_views.xml',
+        'views/van_sold_product_report_wizard_views.xml',
         'views/menu_views.xml',
         'views/van_ledger_report_wizard_views.xml',
         'views/van_dashboard_views.xml',
