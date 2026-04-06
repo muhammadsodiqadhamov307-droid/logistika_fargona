@@ -15,6 +15,7 @@
         'security/van_sales_security.xml',
         'security/ir.model.access.csv',
         'data/van_sales_data.xml',
+        'data/van_sales_bootstrap.xml',
         'views/van_sales_menu_root.xml',
         'views/pos_config_views.xml',
         'views/van_product_views.xml',
