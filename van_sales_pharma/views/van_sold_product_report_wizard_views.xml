@@ -14,14 +14,6 @@
                             <field name="date_from"/>
                             <field name="date_to"/>
                         </group>
-                        <group invisible="not line_ids">
-                            <field name="total_qty" readonly="1"/>
-                            <field name="total_standard_amount" readonly="1"/>
-                            <field name="total_cost_amount" readonly="1"/>
-                            <field name="total_margin_amount" readonly="1"/>
-                            <field name="total_actual_amount" readonly="1"/>
-                            <field name="total_discount_amount" readonly="1"/>
-                        </group>
                     </group>
 
                     <div class="d-flex gap-2 mb-3">
