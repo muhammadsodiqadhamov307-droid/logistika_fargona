@@ -29,17 +29,30 @@
                         <button name="action_clear_report" string="Tozalash" type="object" class="btn btn-secondary" invisible="not line_ids"/>
                     </div>
 
-                    <field name="line_ids" nolabel="1" readonly="1" invisible="not line_ids">
-                        <list create="0" edit="0" delete="0">
+                    <field name="line_ids" nolabel="1" readonly="1" invisible="not line_ids" options="{'no_open': True}">
+                        <list create="0" edit="0" delete="0" open_form_view="0">
                             <field name="product_id"/>
-                            <field name="qty" sum="Jami Miqdor"/>
-                            <field name="standard_amount" sum="Jami" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                            <field name="cost_amount" sum="Jami" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                            <field name="margin_amount" sum="Jami" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                            <field name="actual_amount" sum="Jami" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                            <field name="discount_amount" sum="Jami" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="qty"/>
+                            <field name="standard_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="cost_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="margin_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="actual_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="discount_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                         </list>
                     </field>
+
+                    <group invisible="not line_ids" class="mt-3">
+                        <group string="Jami">
+                            <field name="total_qty" readonly="1"/>
+                            <field name="total_standard_amount" readonly="1"/>
+                            <field name="total_cost_amount" readonly="1"/>
+                        </group>
+                        <group string="Yakuniy">
+                            <field name="total_margin_amount" readonly="1"/>
+                            <field name="total_actual_amount" readonly="1"/>
+                            <field name="total_discount_amount" readonly="1"/>
+                        </group>
+                    </group>
                 </sheet>
             </form>
         </field>
