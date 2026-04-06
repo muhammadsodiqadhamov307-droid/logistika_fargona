@@ -25,7 +25,7 @@ class PosConfig(models.Model):
             user.write({
                 'company_id': company.id,
                 'company_ids': [(4, company.id)],
-                'groups_id': [
+                'group_ids': [
                     (4, agent_group.id),
                     (4, pos_user_group.id),
                 ],
@@ -38,7 +38,7 @@ class PosConfig(models.Model):
             'password': login,
             'company_id': company.id,
             'company_ids': [(6, 0, company.ids)],
-            'groups_id': [
+            'group_ids': [
                 (4, agent_group.id),
                 (4, pos_user_group.id),
             ],
