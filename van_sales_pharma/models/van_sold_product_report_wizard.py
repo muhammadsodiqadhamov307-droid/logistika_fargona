@@ -30,6 +30,7 @@ class VanSoldProductReportWizard(models.TransientModel):
     total_cost_amount = fields.Monetary(string='Jami Tannarx', compute='_compute_totals', currency_field='currency_id')
     total_margin_amount = fields.Monetary(string='Jami Margin', compute='_compute_totals', currency_field='currency_id')
     total_actual_amount = fields.Monetary(string='Jami Amaldagi Sotuv', compute='_compute_totals', currency_field='currency_id')
+    total_actual_margin_amount = fields.Monetary(string='Jami Amaldagi Margin', compute='_compute_totals', currency_field='currency_id')
     total_discount_amount = fields.Monetary(string='Jami Chegirma', compute='_compute_totals', currency_field='currency_id')
     currency_id = fields.Many2one('res.currency', default=lambda self: self.env.company.currency_id)
 
@@ -39,6 +40,7 @@ class VanSoldProductReportWizard(models.TransientModel):
         'line_ids.cost_amount',
         'line_ids.margin_amount',
         'line_ids.actual_amount',
+        'line_ids.actual_margin_amount',
         'line_ids.discount_amount',
     )
     def _compute_totals(self):
@@ -48,6 +50,7 @@ class VanSoldProductReportWizard(models.TransientModel):
             wizard.total_cost_amount = sum(wizard.line_ids.mapped('cost_amount'))
             wizard.total_margin_amount = sum(wizard.line_ids.mapped('margin_amount'))
             wizard.total_actual_amount = sum(wizard.line_ids.mapped('actual_amount'))
+            wizard.total_actual_margin_amount = sum(wizard.line_ids.mapped('actual_margin_amount'))
             wizard.total_discount_amount = sum(wizard.line_ids.mapped('discount_amount'))
 
     def action_generate_report(self):
@@ -79,6 +82,7 @@ class VanSoldProductReportWizard(models.TransientModel):
                 'cost_amount': 0.0,
                 'margin_amount': 0.0,
                 'actual_amount': 0.0,
+                'actual_margin_amount': 0.0,
                 'discount_amount': 0.0,
             })
 
@@ -88,12 +92,14 @@ class VanSoldProductReportWizard(models.TransientModel):
             actual_amount = line.subtotal
             discount_amount = line.discount_amount or max(standard_amount - actual_amount, 0.0)
             margin_amount = standard_amount - cost_amount
+            actual_margin_amount = actual_amount - cost_amount
 
             bucket['qty'] += line.qty
             bucket['standard_amount'] += standard_amount
             bucket['cost_amount'] += cost_amount
             bucket['margin_amount'] += margin_amount
             bucket['actual_amount'] += actual_amount
+            bucket['actual_margin_amount'] += actual_margin_amount
             bucket['discount_amount'] += discount_amount
 
         if not aggregated:
@@ -143,4 +149,5 @@ class VanSoldProductReportWizardLine(models.TransientModel):
     cost_amount = fields.Monetary(string='Tannarx', currency_field='currency_id', readonly=True)
     margin_amount = fields.Monetary(string='Farq / Margin', currency_field='currency_id', readonly=True)
     actual_amount = fields.Monetary(string='Amaldagi Sotuv Summasi', currency_field='currency_id', readonly=True)
+    actual_margin_amount = fields.Monetary(string='Amaldagi Margin', currency_field='currency_id', readonly=True)
     discount_amount = fields.Monetary(string='Chegirma', currency_field='currency_id', readonly=True)
